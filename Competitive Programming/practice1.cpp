@@ -21,21 +21,6 @@ int main(){
     int array[4];
     cin>>value;
     cout<<isPrime(n);
-    for (int i = 2; i < value; i++)
-    {
-        for (int j = 2; j < value; j++)
-        {
-            if(!(isPrime(i)&&isPrime(j))){
-                continue;
-            }
-
-            prod = i*j;
-            int array[]
-            result+=prod;
-
-        }
-           
-    }
-    
+ 
     return 0;
 }
