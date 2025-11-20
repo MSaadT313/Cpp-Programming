@@ -70,7 +70,7 @@ class Heap{
             int max;
             int leftchild = i*2;
             int rightchild = i*2+1;
-            if(arr[parent]>arr[i]){
+            if(arr[parent]<arr[i]){
                 swap(arr[parent],arr[i]);
                 i = parent;
                 break;
@@ -124,49 +124,19 @@ int main()
 {
     // cout<<"Given Heap Array: \n";
     Heap h1;
+    cout<<"Given Heap array:\n";
     h1.insert(8);
     h1.insert(7);
     h1.insert(6);
     h1.insert(5);
     h1.insert(4);
-    // h1.print();
-    int arr[] = {-1,5,36,3,11,67,22};
-    int n = 6;
-    for (int i = n/2; i > 0; i--)
-    {
-        heapify(arr,n,i);
-    }
-    for (int i = 1; i <= n; i++)
-    {
-        cout<<arr[i]<<" ";
-    }
-    cout<<endl;
-    cout<<"Heapsort Functions called"<<endl;
-    heap_sort(arr, n);
-    for (int i = 1; i <= n; i++)
-    {
-        cout<<arr[i]<<" ";
-    }
-    cout<<endl<<"Max Heap";
-    priority_queue<int> pq;
-    pq.push(42);
-    pq.push(3);
-    pq.push(45);
-    pq.push(411);
-    pq.push(46);
-    pq.push(234);
-    cout<<"top element in priority queue "<<pq.top();
-    cout<<"\nSize "<<pq.size();
+    h1.print();
+    cout<<"Deletion Performed:\n";
+    h1.deletefromheap();
+    h1.print();
+    cout<<"Updated Key:\n";
+    h1.update_key(3,9);
+    h1.print();
 
-    cout<<endl<<"Min heap\n";
-    priority_queue<int, vector<int>, greater<int>> minheap;
-    minheap.push(42);
-    minheap.push(3);
-    minheap.push(45);
-    minheap.push(411);
-    minheap.push(46);
-    minheap.push(234);
-    cout<<"top element in priority queue "<<minheap.top();
-    cout<<"\nSize "<<minheap.size();
     return 0;
 }
