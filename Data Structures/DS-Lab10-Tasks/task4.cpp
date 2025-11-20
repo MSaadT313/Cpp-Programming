@@ -2,27 +2,35 @@
 #include<iostream>
 using namespace std;
 void heapify(int arr[], int n, int i){
-    int smallest = i;
+    int largest = i;
     int left = i*2+1;
     int right = i*2+2;
-    if(left < n && arr[smallest] > arr[left]){
-        smallest = left;
+    if(left < n && arr[largest] < arr[left]){
+        largest = left;
     }
-    if(right < n && arr[smallest] > arr[ right]){
-        smallest  = right;
+    if(right < n && arr[largest] < arr[ right]){
+        largest  = right;
     }
-    if(smallest != i){
-        swap(arr[smallest], arr[i]);
-        heapify(arr, i, smallest);
+    if(largest != i){
+        swap(arr[largest], arr[i]);
+        heapify(arr, n, largest);
     }
 }
 int main(){
-    int arr[] = {1,435,3,24,35,2,45};
-    int n =7;
-    for (int i = n/2; i > 0; i--)
+    int arr[] = {3,5,9,6,8,20,10,12,18,9};
+    int n = sizeof(arr)/sizeof(arr[0]);
+    cout<<"Min Heap Array: \n";
+    for (int i = 0; i < n; i++)
+    {
+        cout<<arr[i]<<" ";
+    }
+    cout<<endl;
+
+    for (int i = n/2 - 1; i >= 0; i--)
     {
         heapify(arr,n,i);
     }
+    cout<<"Max Heap Array: \n";
     for (int i = 0; i < n; i++)
     {
         cout<<arr[i]<<" ";
