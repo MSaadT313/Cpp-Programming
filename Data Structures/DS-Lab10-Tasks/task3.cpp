@@ -43,9 +43,8 @@ int main(){
     int k;
     cout<<"Enter kth largest index: ";cin>>k;
     heap_sort(arr,n);
-    reverse(arr,arr +n);
-    
-      cout<<"Kth largest number: "<<arr[k-1];
+
+      cout<<"Kth largest number: "<<arr[n-k];
     
 return 0;
 }

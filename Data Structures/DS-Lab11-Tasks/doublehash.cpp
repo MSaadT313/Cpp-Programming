@@ -1,100 +1,166 @@
 #include <iostream>
-#include <string>
 using namespace std;
 
-const int TABLE_SIZE = 10;
+// Maximum table size
+const int TABLE_SIZE = 100;
 
-class HashTable {
-private:
-    int keys[TABLE_SIZE];
-    string values[TABLE_SIZE];
-    bool occupied[TABLE_SIZE];
-
-    // Primary hash
-    int hash1(int key) {
-        return key % TABLE_SIZE;
-    }
-
-    // Secondary hash (step size), must be non-zero
-    int hash2(int key) {
-        int R = 7; // prime smaller than TABLE_SIZE
-        return R - (key % R);
-    }
-
-public:
-    HashTable() {
-        for (int i = 0; i < TABLE_SIZE; i++) {
-            keys[i] = 0;
-            values[i] = "";
-            occupied[i] = false;
-        }
-    }
-
-    void insert(int key, const string& name) {
-        int h1 = hash1(key);
-        int h2 = hash2(key);
-        int index;
-        int i = 0;
-
-        while (i < TABLE_SIZE) {
-            index = (h1 + i * h2) % TABLE_SIZE;
-
-            if (!occupied[index] || keys[index] == key) {
-                keys[index] = key;
-                values[index] = name;
-                occupied[index] = true;
-                return;
-            }
-
-            i++;
-        }
-
-        cout << "Hash table full, cannot insert key " << key << endl;
-    }
-
-    string search(int key) {
-        int h1 = hash1(key);
-        int h2 = hash2(key);
-        int index;
-        int i = 0;
-
-        while (i < TABLE_SIZE) {
-            index = (h1 + i * h2) % TABLE_SIZE;
-
-            if (!occupied[index]) return "NOT FOUND";
-            if (keys[index] == key) return values[index];
-
-            i++;
-        }
-
-        return "NOT FOUND";
-    }
-
-    void display() {
-        cout << "Index\tKey\tName\n";
-        for (int i = 0; i < TABLE_SIZE; i++) {
-            if (occupied[i])
-                cout << i << "\t" << keys[i] << "\t" << values[i] << "\n";
-            else
-                cout << i << "\t-\t-\n";
-        }
-    }
+// Node structure for separate chaining
+struct Node {
+    char key[50];      // the input word
+    char meaning[50];  // meaning or value
+    Node* next;
 };
 
+// Our hash table (array of pointers)
+Node* HashTable[TABLE_SIZE];
+
+// ----------------------------------------------------
+// Helper: Copy strings manually (since no string library allowed)
+// ----------------------------------------------------
+void copyString(char dest[], const char src[]) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = '\0';
+}
+
+// ----------------------------------------------------
+// Helper: Compare two strings manually
+// ----------------------------------------------------
+bool equalString(const char a[], const char b[]) {
+    int i = 0;
+    while (a[i] != '\0' || b[i] != '\0') {
+        if (a[i] != b[i]) return false;
+        i++;
+    }
+    return true;
+}
+
+// ----------------------------------------------------
+// Hash Function: SUM of ASCII values mod 100
+// ----------------------------------------------------
+int hashFunction(const char word[]) {
+    int sum = 0;
+    int i = 0;
+
+    while (word[i] != '\0') {
+        sum += word[i];   // add ASCII value
+        i++;
+    }
+
+    return sum % TABLE_SIZE;
+}
+
+// ----------------------------------------------------
+// Add_Record() – Insert string into hash table
+// ----------------------------------------------------
+void Add_Record(const char key[], const char meaning[]) {
+    int index = hashFunction(key);
+
+    // Create new node
+    Node* newNode = new Node;
+    copyString(newNode->key, key);
+    copyString(newNode->meaning, meaning);
+    newNode->next = NULL;
+
+    // Insert at head of chain
+    if (HashTable[index] == NULL) {
+        HashTable[index] = newNode;
+    } else {
+        newNode->next = HashTable[index];
+        HashTable[index] = newNode;
+    }
+
+    cout << "Record (" << key << ", " << meaning << ") added at index " << index << "!" << endl;
+}
+
+// ----------------------------------------------------
+// Word_Search() – return meaning or error
+// ----------------------------------------------------
+void Word_Search(const char key[]) {
+    int index = hashFunction(key);
+
+    Node* temp = HashTable[index];
+    while (temp != NULL) {
+        if (equalString(temp->key, key)) {
+            cout << "search key " << key << ": " << temp->meaning << endl;
+            return;
+        }
+        temp = temp->next;
+    }
+
+    cout << "Error: Word '" << key << "' not found!" << endl;
+}
+
+// ----------------------------------------------------
+// Delete record
+// ----------------------------------------------------
+void Delete_Record(const char key[]) {
+    int index = hashFunction(key);
+
+    Node* curr = HashTable[index];
+    Node* prev = NULL;
+
+    while (curr != NULL) {
+        if (equalString(curr->key, key)) {
+            if (prev == NULL)
+                HashTable[index] = curr->next;
+            else
+                prev->next = curr->next;
+
+            delete curr;
+            cout << "key " << key << " deleted successfully !" << endl;
+            return;
+        }
+
+        prev = curr;
+        curr = curr->next;
+    }
+
+    cout << "Error: key '" << key << "' not found!" << endl;
+}
+
+// ----------------------------------------------------
+// Print_Dictionary() – Print full table
+// ----------------------------------------------------
+void Print_Dictionary() {
+    for (int i = 0; i < TABLE_SIZE; i++) {
+        if (HashTable[i] != NULL) {
+            cout << "index " << i << ": ";
+
+            Node* temp = HashTable[i];
+            while (temp != NULL) {
+                cout << "(" << temp->key << ", " << temp->meaning << ") ";
+                temp = temp->next;
+            }
+            cout << endl;
+        }
+    }
+}
+
+// ----------------------------------------------------
+// MAIN FUNCTION (Example Demonstration)
+// ----------------------------------------------------
 int main() {
-    HashTable h;
+    // Initialize table
+    for (int i = 0; i < TABLE_SIZE; i++)
+        HashTable[i] = NULL;
 
-    h.insert(1, "Ali");
-    h.insert(11, "Sara"); 
-    h.insert(21, "Raza");  
-    h.insert(2, "Taha");
+    // Adding records
+    Add_Record("AB", "FASTNU");
+    Add_Record("CD", "CS");
+    Add_Record("EF", "STUDENT");
 
-    cout << "Search key 11: " << h.search(11) << endl;
-    cout << "Search key 21: " << h.search(21) << endl;
-    cout << "Search key 5 : " << h.search(5) << endl;
+    // Searching
+    Word_Search("AB");
 
-    cout << "\nHash table:\n";
-    h.display();
+    // Deleting
+    Delete_Record("EF");
+
+    // Display
+    Print_Dictionary();
 
     return 0;
 }
