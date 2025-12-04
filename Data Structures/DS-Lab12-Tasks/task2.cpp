@@ -1,76 +1,64 @@
 #include<iostream>
 #include<string>
 using namespace std;
-#define d 256
-void RKAlogo(string text, string pattern, int q){
-    int n =  text.length();
+void rabinkarp(string text , string pattern){
+    int n = text.length();
     int m = pattern.length();
-    int p = 0;
-    int t = 0;
-    int h = 1;
+    if( m==0 || m > n){
+        cout<<"Invalid Pattern !"<<endl;
+    }
+    int d = 256 ;
+    int q = 101 ;
+    long long h = 1 ;
+    long long p = 0;
+    long long t = 0;
 
-    if (m>n || m==0)
-    {
-        cout<<"Invalid String inputted"<<endl;
-        return;
+    for(int i=0 ; i<m-1 ; i++){
+        h = (h * d) % q;
     }
-
-    for (int i = 0; i < m-1; i++)      //it give us the value that is then used to remove the old character from the new hash value
-    {
-        h = (h * d)% q;
+    for(int i=0 ; i<m ;i++){
+        p = (p * d + pattern[i]) % q;
+        t = (t * d + text[i]) % q ;
     }
-    for (int i = 0; i < m; i++)
-    {
-        p = (d * p + pattern[i])% q;
-        t = (d * t + text[i])%q;
-    }
-    
-    for (int i = 0; i <= n-m; i++)
-    {
-        if(p == t){
-            bool match = true;
-            for (int j = 0; j < m; j++)
-            {
-                if (text[i+j] != pattern[j])
-                {
+    for(int i = 0 ; i <= n - m ; i++){
+        if(p == t) {
+            bool match = true ;
+            for(int j=0 ; j < m ; j++){
+                if ( (text[i+j]) != (pattern[j]) ){    //extra challenge to check pattern
                     match = false;
                     break;
                 }
             }
-            if (match)
-            {
-                cout << "Value found at index "<<i<<endl;
+            if(match){
+                cout<<i<<" ";
+            } else {
+                cout<<"False positive hash match at index "<<i
+                <<" same hash value but different strings. "<<i<<" discarded"<<endl;
             }
         }
-
-        if(i < n-m){
-            t = (d * ( t - text[i]*h)+text[i+m])%q;
+        if ( i < n-m) {
+            t = (d * (t - (text[i])*h) + (text[m+i])) % q;
             if(t<0){
-                t = t +q;
+                t+=q ;
             }
         }
     }
-    
-    
-
 }
-
-
-
-
-
 int main(){
-     string text = "Data structures and algorithms are fun. Algorithms make tasks easier.";
+    string text = "Data structures and algorithms are fun.Algorithms make tasks easier.";
+    for (char &c : text) {
+    c = tolower(c);
+    }
     string pattern = "Algorithms";
+    for (char &c : pattern){
+        c = tolower(c);
+    }
+    rabinkarp(text,pattern);
+    cout<<endl;
 
-    int q = 101; // a prime number
-
-    RKAlogo(text, pattern, q);
-
-
-
-
-
-
+    cout<<"<---Demonstrating the effect of hash collissions--->"<<endl;
+    string newt = "A2";
+    string newp = "Ba";
+    rabinkarp(newt,newp);
     return 0;
 }

@@ -1,35 +1,29 @@
 #include<iostream>
+#include<string>
 using namespace std;
-
-int bruteforce(string text, string pattern){
-
-    int m = pattern.length();
-    int n = text.length();
-    int k = 0;
-    for (int i = 0; i < n-m; i++)
-    {
-        int j =0;
-        while(j<m && text[i+j] == pattern[j]){
-            j++;
+void bruteforce(string text , string pattern , int &count){
+    int m = text.length();
+    int n = pattern.length();
+    cout<<"[ ";
+    for (int i = 0 ;i <= m-n; i++){
+        int j = 0;
+        count++;    // extra challenge to count no. of comparisons
+        while ( j < n && text[i+j] == pattern[j]){
+            j++ ;
+            count++;
         }
-        if(j == m){      //if the size of pattern=searched string
-            k++;
-            cout<<"Pattern Found"<<endl;
+        if(n == j){
+            cout<<i<<" ";
         }
     }
-    return k;
-    
+    cout<<"]"<<endl;
+    return ;
 }
-int main() {
+int main(){
     string text = "the quick brown fox jumps over the lazy dog";
     string pattern = "the";
-    int n = bruteforce(text, pattern);
-    if (n==0)
-    {
-        cout<<"No pattern Found"<<endl;
-    }
-    else{
-        cout<<n<<" indexes found."<<endl;
-    }
+    int count = 0;
+    bruteforce(text, pattern,count);
+    cout<<"Total no. of comparisons made by algorithm = "<<count<<endl;
     return 0;
 }
